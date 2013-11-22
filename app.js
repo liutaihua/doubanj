@@ -38,6 +38,7 @@ module.exports.boot = function() {
   app.use(connect_domain());
 
   app.use(express.static(central.assets.root, { maxAge: TWO_WEEKS }));
+  app.use(express.logger({stream: accessLogfile}));
 
   app.use(express.methodOverride());
   app.use(express.cookieParser());
@@ -78,3 +79,7 @@ if (!module.parent) {
   module.exports.boot();
 //}, 20000);
 }
+
+var fs = require('fs');
+var accessLogfile = fs.createWriteStream('access.log', {flags: 'a'});
+var errorLogfile = fs.createWriteStream('error.log', {flags: 'a'});

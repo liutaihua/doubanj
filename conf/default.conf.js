@@ -9,10 +9,10 @@ module.exports = {
   site_name: '豆瓣酱',
 
   // the port of the root server
-  port: 3000,
-  site_root: 'http://localhost:3000',
-  ssl_root: 'https://localhost:3000',
-  assets_root: 'http://localhost:3000',
+  port: 3344,
+  site_root: 'http://yyu.me:3344',
+  ssl_root: 'https://yyu.me:3344',
+  assets_root: 'http://yyu.me:3344',
 
   salt: 'keyboardcatndog',
 
@@ -38,8 +38,8 @@ module.exports = {
 
   douban: {
     limit: 10, // request limit per minute
-    key: '',
-    secret: ''
+    key: '0118e6db0ecac533034ab4912c604f99',
+    secret: 'ed2cd065e095ba9e'
   },
   // more random api keys for public informations
   douban_more: [
