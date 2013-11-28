@@ -10,9 +10,9 @@ module.exports = {
 
   // the port of the root server
   port: 3344,
-  site_root: 'http://yyu.me:3344',
-  ssl_root: 'https://yyu.me:3344',
-  assets_root: 'http://yyu.me:3344',
+  site_root: 'http://yyu.me',
+  ssl_root: 'https://yyu.me',
+  assets_root: 'http://yyu.me',
 
   salt: 'keyboardcatndog',
 
@@ -34,7 +34,7 @@ module.exports = {
   },
 
   // 管理员的豆瓣 uid
-  admin_users: ['yajc'],
+  admin_users: ['44688091'],
 
   douban: {
     limit: 10, // request limit per minute

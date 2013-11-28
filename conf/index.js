@@ -15,6 +15,7 @@ function readConfig() {
   var NODE_ENV = global.process.env.NODE_ENV || 'development';
   var defaultConf = require('./default.conf.js');
   var conf = require('./' + NODE_ENV + '.conf.js');
+  //var conf = require('./' + 'default'+ '.conf.js');
 
   conf.__proto__ = defaultConf;
 

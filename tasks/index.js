@@ -52,11 +52,14 @@ mods.forEach(function(item) {
     log('Queue %s dumped.', queue.key);
   });
 
+  // 将已初始化的queue, 用模块方式暴露出去
   module.exports[item + '_queue'] = queue;
 
 });
 
 module.exports._keyprefix = function(prefix) {
+  // 提供给自定义一个queue时使用, 加上自己的自定义前缀, 防止干扰已存在的doubanj-queue-xxx 系列队列
+  // toplist.js里就有用到
   mods.forEach(function(item) {
     module.exports[item + '_queue'].key = prefix + item;
   });

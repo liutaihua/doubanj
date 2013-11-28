@@ -17,12 +17,13 @@ function updateAll(query) {
   var now = new Date();
 
   if (tasks.interest.queue.queue.length) {
-    log('There are unfinished task. Exit.');
+    console.log('There are unfinished task. Exit.');
     return;
   }
 
   User.stream(query, { limit: null }, function(stream) {
     stream.on('data', function(doc) {
+      console.log(doc._id);
       var u = new User(doc);
 
       stream.pause();
@@ -33,24 +34,24 @@ function updateAll(query) {
           force: true,
           fresh: false,
           success: function() {
-            log('Callback sussess for user %s [%s].', u.uid, u.name);
+            console.log('Callback sussess for user %s [%s].', u.uid, u.name);
             if (stream.paused) {
               stream.resume();
             }
           },
           error: function() {
-            log('Callback error for user %s [%s].', u.uid, u.name);
+            console.log('Callback error for user %s [%s].', u.uid, u.name);
             if (stream.paused) {
               stream.resume();
             }
           }
         });
       });
-      log('Queue user %s [%s]', u.uid, u.name);
+      console.log('Queue user %s [%s]', u.uid, u.name);
     });
     stream.on('close', function() {
-      log('=== Stream closed. ===');
-      setTimeout(process.exit, 120000);
+      console.log('=== Stream closed. ===');
+      setTimeout(process.exit, 1200);
     });
   });
 }
@@ -60,10 +61,10 @@ setTimeout(updateAll, 2000, {
     $ne: 'ing'
   },
   book_n: {
-    $gt: 100
+    $gt: 1
   },
   // 一周之内更新过的用户就不再更新
   last_synced: {
-    $lt: new Date(new Date() - oneweek)
+    $lt: new Date(new Date())
   },
 });

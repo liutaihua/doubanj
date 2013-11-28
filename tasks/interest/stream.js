@@ -33,6 +33,7 @@ function FetchStream(arg) {
   this.status = 'ready';
 
   this.api_uri = '/v2/' + arg.ns + '/user/' + this.uid + '/collections';
+  //console.log('this.api_uri', this.api_uri)
 
   this.col_query = { user_id: this.user._id };
   this.col_name = ns + '_interest';

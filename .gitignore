@@ -18,3 +18,5 @@ static/.file_etags
 *.min.*
 *.rdb
 *.un~
+nohup.out
+*.log

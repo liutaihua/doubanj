@@ -26,44 +26,34 @@ function message() {
 var collect, _collect;
 collect = User.ensured(function(user, arg) {
   if (!user) return arg.error('NO_USER');
-
   arg.user = user;
-
   // try update user info
   if (arg.fresh && !arg._from_halt) {
     setImmediate(function() {
       user.pull();
     });
   }
-
   var uid = user.uid || user.id;
-
   var raven_extra = { ns: arg.ns, uid: uid };
   message('START collect interests for %s', uid, raven_extra);
-
   var collector = new FetchStream(arg);
-
   // halt if syncing is already running
   if (user.last_synced_status === 'ing' && !arg.force && !arg._from_halt) {
     message('EXIT collect for %s due to runing..', uid, raven_extra);
     arg.error(new Error('Already running collecting process.'));
     return;
   }
-
   collector.on('error', function(err) {
     console.trace(err);
     error(err, raven_extra);
-
     collector.status = 'failed';
     collector.updateUser(function() {
       collector.end();
     });
   });
-
   collector.on('saved', function(data) {
     collector.updateUser();
   });
-
   collector.once('end', function() {
     // wait for the really ends
     setTimeout(function() {
@@ -80,7 +70,6 @@ collect = User.ensured(function(user, arg) {
       }
     }, 2000);
   });
-
   collector.once('succeed', function() {
     // run compute task right after success
     require('../compute')[arg.ns]({
@@ -114,13 +103,13 @@ function run_toplist(user, all_results) {
   if (central.DEBUG) total = 20000;
 
   // 收藏数量太少的用户对最终结果应该也没什么影响
-  if (total > 200) {
+  if (total > 20) {
     jobs.push(async.apply(toplist.hardest_reader, 'last_30_days'));
   }
-  if (total > 500) {
+  if (total > 50) {
     jobs.push(async.apply(toplist.hardest_reader, 'last_12_month'));
   }
-  if (total > 1000) {
+  if (total > 100) {
     jobs.push(async.apply(toplist.hardest_reader, 'all_time'));
 
     /**
@@ -144,9 +133,13 @@ function run_toplist(user, all_results) {
 function collect_in_namespace(ns) {
   return function(arg) {
     // queue arguments safely
+    // 'collect_' + ns作为fn名字传入一个可恢复的任务队列, 执行
+    // 这个fn名字只是存放在exports.queue里, 只是一个数组
+    // 在使用safely放入的时候, safely方法会查找初始化resumeable对象传给对象的mod, 找到对应的fn名执行,参数arg
     exports.queue.safely('collect_' + ns, arg);
 
     arg.ns = ns;
+    //arg.success = function() {console.log('Success' + ns, 'arg:', arg);};
 
     collect(arg.user, arg);
   };
@@ -155,6 +148,7 @@ function collect_in_namespace(ns) {
 var exports = {};
 
 central.DOUBAN_APPS.forEach(function(item) {
+  // 将collect_xx封装都放到总目录的export module里去, 在tasks/index.js里的mod包括了这些, mod最后被传给resumeable队列,在队列safely的时候, 根据fn名字取exports里的function执行
   exports['collect_' + item] = collect_in_namespace(item);
 });
 
